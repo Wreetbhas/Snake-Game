@@ -1,40 +1,84 @@
 import pygame, sys, utils, random, time
 from button import Button
 
-def find_pos(fruit_position, snake_body):
-    if (fruit_position[0] < 0 or fruit_position[0] > (utils.length - 10)) or (fruit_position[1] < 10 or fruit_position[1] > (utils.breadth - 10)):
-        return None
-    
-    if (fruit_position in utils.blocks) or (fruit_position in snake_body):
-        pos = find_pos((fruit_position[0],fruit_position[1]-10), snake_body)
-        if pos != None:
-            return pos
-        pos = find_pos((fruit_position[0]-10,fruit_position[1]-10), snake_body)
-        if pos != None:
-            return pos
-        pos = find_pos((fruit_position[0]+10,fruit_position[1]-10), snake_body)
-        if pos != None:
-            return pos
-        pos = find_pos((fruit_position[0]-10,fruit_position[1]), snake_body)
-        if pos != None:
-            return pos
-        pos = find_pos((fruit_position[0]+10,fruit_position[1]), snake_body)
-        if pos != None:
-            return pos
-        pos = find_pos((fruit_position[0]-10,fruit_position[1]+10), snake_body)
-        if pos != None:
-            return pos
-        pos = find_pos((fruit_position[0],fruit_position[1]+10), snake_body)
-        if pos != None:
-            return pos
-        pos = find_pos((fruit_position[0]+10,fruit_position[1]+10), snake_body)
-        if pos != None:
-            return pos
-        return None
-        
+# check whether a coordinate lies outside window or not
+def isOutside(pos):
+    if (pos[0]<0 or pos[0]>utils.length-10) or (pos[1]<10 or pos[1]>utils.breadth-10):
+        return True
     else:
-        return fruit_position
+        return False
 
+
+# finding nearest neighbouring coordinate of the invalid fruit position
+def find_pos(start, snake_body):
+
+    length = 1
+    bound1 = True
+    bound2 = True
+    bound3 = True
+    bound4 = True
+
+    while (bound1 == True) and (bound2 == True) and (bound3 == True) and (bound4 == True):
+        
+        length += 2
+
+        start = start[0]-10, start[1]-10
+        end = start[0]+(length*10)-10, start[1]
+
+        if isOutside(start) and isOutside(end):
+            bound1 = False
+
+        if bound1 == True:
+            temp = start
+
+            while temp[0]<=end[0]:
+                if (not isOutside(temp)) and (temp not in utils.blocks) and (temp not in snake_body):
+                    return temp
+                temp = temp[0]+10,temp[1]
+
+        start = end
+        end = start[0], start[1]+(length*10)-10
+
+        if isOutside(start) and isOutside(end):
+            bound2 = False
+
+        if bound2 == True:
+            temp = start
+
+            while temp[1]<=end[1]:
+                if (not isOutside(temp)) and (temp not in utils.blocks) and (temp not in snake_body):
+                    return temp
+                temp = temp[0],temp[1]+10
+
+        start = end
+        end = start[0]-(length*10)+10, start[1]
+
+        if isOutside(start) and isOutside(end):
+            bound3 = False
+
+        if bound3 == True:
+            temp = start
+
+            while temp[0]>=end[0]:
+                if (not isOutside(temp)) and (temp not in utils.blocks) and (temp not in snake_body):
+                    return temp
+                temp = temp[0]-10,temp[1]
+
+        start = end
+        end = start[0], start[1]-(length*10)+10
+
+        if isOutside(start) and isOutside(end):
+            bound4 = False
+
+        if bound4 == True:
+            temp = start
+
+            while temp[1]>=end[1]:
+                if (not isOutside(temp)) and (temp not in utils.blocks) and (temp not in snake_body):
+                    return temp
+                temp = temp[0],temp[1]-10
+
+    return None  
 
 def getRandPos(snake_body):
     fruit_position = (random.randrange(0, ((utils.length-10)//10)) * 10, random.randrange(10, ((utils.breadth-10)//10)) * 10)
@@ -156,6 +200,28 @@ def run(SCREEN):
     fruit_position = getRandPos(snake_body_set)
     fruit_spawn = True
 
+    SCREEN.fill(utils.blue)
+
+    pygame.draw.rect(SCREEN, utils.white, pygame.Rect(0,0,utils.length,10))   
+
+    NEW_BUTTON = Button(pos=(25, 6), text_input="NEW GAME", font=utils.get_font('Calibri', 10), hovering_color="red", selected_color="green", deselected_color="black")
+    PAUSE_BUTTON = Button(pos=(75, 6), text_input="PAUSE", font=utils.get_font('Calibri', 10), hovering_color="red", selected_color="green", deselected_color="black")        
+    BACK_BUTTON = Button(pos=(115, 6), text_input="BACK", font=utils.get_font('Calibri', 10), hovering_color="red", selected_color="green", deselected_color="black")
+
+    MOUSE_POS = pygame.mouse.get_pos()
+
+    for button in [NEW_BUTTON, PAUSE_BUTTON, BACK_BUTTON]:
+        button.render(MOUSE_POS, SCREEN)
+
+    for pos in utils.blocks:
+        pygame.draw.rect(SCREEN, utils.red, pygame.Rect(pos[0], pos[1], 10, 10))     
+
+    pygame.draw.rect(SCREEN, utils.black, pygame.Rect(snake_position[0], snake_position[1], 10, 10))
+
+    for pos in snake_body[1:]:
+        pygame.draw.rect(SCREEN, utils.green, pygame.Rect(pos[0], pos[1], 10, 10))
+
+    pygame.draw.rect(SCREEN, utils.white, pygame.Rect(fruit_position[0], fruit_position[1], 10, 10))     
 
     # default snake direction
     direction = 'RIGHT'
@@ -224,11 +290,15 @@ def run(SCREEN):
         # will be incremented by 10
         snake_body.insert(0, tuple(snake_position))
         snake_body_set.add(tuple(snake_position))
+        pygame.draw.rect(SCREEN, utils.green, pygame.Rect(snake_body[1][0], snake_body[1][1], 10, 10))
+        pygame.draw.rect(SCREEN, utils.black, pygame.Rect(snake_position[0], snake_position[1], 10, 10))
         if snake_position[0] == fruit_position[0] and snake_position[1] == fruit_position[1]:
             score += 10
             fruit_spawn = False
         else:
-            snake_body_set.remove(tuple(snake_body.pop()))
+            poped = snake_body.pop()
+            pygame.draw.rect(SCREEN, utils.blue, pygame.Rect(poped[0], poped[1], 10, 10))
+            snake_body_set.remove(tuple(poped))
 
         if not fruit_spawn:
             fruit_position = getRandPos(snake_body_set)
@@ -238,7 +308,16 @@ def run(SCREEN):
 
         fruit_spawn = True
 
-        SCREEN.fill(utils.blue)
+        pygame.draw.rect(SCREEN, utils.white, pygame.Rect(fruit_position[0], fruit_position[1], 10, 10))  
+
+        # Game Over conditions
+        if tuple(snake_position) in utils.blocks:
+            game_over(SCREEN)
+        
+        # Touching the snake body
+        for block in snake_body[1:]:
+            if snake_position[0] == block[0] and snake_position[1] == block[1]:
+                game_over(SCREEN)   
 
         pygame.draw.rect(SCREEN, utils.white, pygame.Rect(0,0,utils.length,10))   
 
@@ -251,26 +330,7 @@ def run(SCREEN):
         for button in [NEW_BUTTON, PAUSE_BUTTON, BACK_BUTTON]:
             button.render(MOUSE_POS, SCREEN)
 
-        for pos in utils.blocks:
-            pygame.draw.rect(SCREEN, utils.red, pygame.Rect(pos[0], pos[1], 10, 10))     
-
-        pygame.draw.rect(SCREEN, utils.black, pygame.Rect(snake_position[0], snake_position[1], 10, 10))
-
-        for pos in snake_body[1:]:
-            pygame.draw.rect(SCREEN, utils.green, pygame.Rect(pos[0], pos[1], 10, 10))
-
-        pygame.draw.rect(SCREEN, utils.white, pygame.Rect(fruit_position[0], fruit_position[1], 10, 10))        
-
-        # Game Over conditions
-        if tuple(snake_position) in utils.blocks:
-            game_over(SCREEN)
-        
-        # Touching the snake body
-        for block in snake_body[1:]:
-            if snake_position[0] == block[0] and snake_position[1] == block[1]:
-                game_over(SCREEN)
-
-        show_score(SCREEN) 
+        show_score(SCREEN)
 
         # Refresh game screen
         pygame.display.update()
