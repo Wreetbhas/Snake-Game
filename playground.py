@@ -78,7 +78,7 @@ def run(SCREEN):
                         utils.blocks.add((x,i))
                     
                     y += 30 
-                    for i in range(0,x,10):
+                    for i in range(0,x+10,10):
                         utils.blocks.add((i,y))
 
                     x = ((int(utils.length*0.75))//10)*10
