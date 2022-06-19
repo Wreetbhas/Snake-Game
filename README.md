@@ -8,6 +8,6 @@
 
 ![2 1](https://user-images.githubusercontent.com/79754822/174467807-cf14a4ff-bd4d-42e1-834c-941128a0ea85.jpg)
 
-![3](https://user-images.githubusercontent.com/79754822/174467390-66d01f3b-3408-4fda-9543-a140c62cd32c.jpg)
+![3 1](https://user-images.githubusercontent.com/79754822/174467866-90cfedc8-e924-4ba6-a8b6-41912e6b9ef4.jpg)
 
 * **Snake speed can be changed**
