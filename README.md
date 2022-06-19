@@ -1,8 +1,10 @@
-# To run this game, run main.py file
+## It is a snake game. Here the aim of the player is to eat food without hitting the obstacle or itself
 
-# It's features:
+### To run this game, run main.py file
 
-* ### **Different playground options**
+### It's features:
+
+* #### **Different playground options**
 
 ![1 1](https://user-images.githubusercontent.com/79754822/174467744-d78ac418-bae4-43fb-af4f-e83c3c826bc5.jpg)
 
