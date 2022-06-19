@@ -2,7 +2,7 @@
 
 # It's features:
 
-* **Different playground options**
+* ### **Different playground options**
 
 ![1 1](https://user-images.githubusercontent.com/79754822/174467744-d78ac418-bae4-43fb-af4f-e83c3c826bc5.jpg)
 
@@ -10,4 +10,4 @@
 
 ![3 1](https://user-images.githubusercontent.com/79754822/174467866-90cfedc8-e924-4ba6-a8b6-41912e6b9ef4.jpg)
 
-* **Snake speed can be changed**
+* ### **Snake speed can be changed**
